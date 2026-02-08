@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Odliczanie</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: radial-gradient(circle at top, #2b1055, #000);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* ⬅ serduszka nie robią scrolla */
+        }
+
+        /* 💜 SERDUSZKA */
+        .heart {
+            position: absolute;
+            bottom: -20px;
+            color: rgba(255, 120, 180, 0.6);
+            animation: floatUp linear forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            from {
+                transform: translateY(0) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-110vh) scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        .wrapper {
+            display: flex;
+            gap: 40px;
+            animation: fadeIn 1.2s ease;
+            z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+            .wrapper {
+                flex-direction: column;
+            }
+        }
+
+        .box {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            padding: 50px;
+            border-radius: 24px;
+            max-width: 900px;
+            width: 100%;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        .countdown-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        @keyframes breathe {
+            0%, 100% { box-shadow: 0 0 30px rgba(255,120,180,0.15); }
+            50% { box-shadow: 0 0 60px rgba(255,120,180,0.35); }
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .time {
+            font-size: 42px;
+            margin-bottom: 25px;
+        }
+
+        .time span {
+            display: inline-block;
+            animation: slideFade 0.6s ease;
+        }
+
+        @keyframes slideFade {
+            from {
+                transform: translateY(12px);
+                filter: blur(6px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                filter: blur(0);
+                opacity: 1;
+            }
+        }
+
+        .final-btn {
+            display: none;
+            padding: 16px 30px;
+            border-radius: 16px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff7ab6, #9d50ff);
+            color: #fff;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .final-btn:hover {
+            box-shadow: 0 12px 30px rgba(255,120,180,0.45);
+        }
+
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .message strong {
+            color: #ff9ed2;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <!-- ⏱ ODLICZANIE -->
+    <div class="box countdown-box">
+        <h1>Odtworzysz to za:</h1>
+        <div class="time" id="timer">Ładowanie...</div>
+
+        <button class="final-btn" id="finalBtn" onclick="goToFinal()">
+            💜 Kliknij tutaj
+        </button>
+    </div>
+
+    <!-- 💬 WIADOMOŚĆ -->
+    <div class="box">
+        <h1>Misiaaa wytrzymasz jeszcze te kilka dni hehe</h1>
+
+        <div class="message">
+            <strong>Tus ojos me siguen como una sombra; incluso cuando las luces se apagan, los sentimientos no.</strong><br><br>
+            Nie pokazuj tego nikomu, bo to jest tylko dla Ciebie 💜  
+            Jak minie odliczanie, możesz to otworzyć…  
+            i przepraszam za to bo to cringee z tego.. z pewnych przyczyn musiałem zmienić wszystko w tym całą stronę zrobiłem od nowa i wgl ale o tym się dowiesz za tydzień jak już czas minie😭💘  
+            do zobaczenia jak czas minie, papatki 😘
+          
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* ⏱ ODLICZANIE */
+    const targetDate = new Date("2026-02-14T00:00:00").getTime();
+    const FINAL_URL = "https://tobiaszxyz.github.io/mes/mes.html";
+
+    const timer = document.getElementById("timer");
+    const finalBtn = document.getElementById("finalBtn");
+
+    let lastValue = "";
+
+    function goToFinal() {
+        window.location.href = FINAL_URL;
+    }
+
+    setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance <= 0) {
+            timer.style.display = "none";
+            finalBtn.style.display = "block";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const value = `${days} dni ${hours}h ${minutes}m ${seconds}s`;
+
+        if (value !== lastValue) {
+            timer.innerHTML = `<span>${value}</span>`;
+            lastValue = value;
+        }
+    }, 1000);
+
+    /* 💜 GENERATOR SERDUSZEK */
+    setInterval(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "💜";
+
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = Math.random() * 20 + 14 + "px";
+        heart.style.animationDuration = Math.random() * 5 + 6 + "s";
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+            heart.remove();
+        }, 11000);
+    }, 600);
+</script>
+
+</body>
+</html>
